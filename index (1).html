@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101a2c" />
+  <title>A Little Love, Just for You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #101a2c;
+      --ivory: #f4f0e8;
+      --muted: #aeb9c9;
+      --sky: #a9bddb;
+      --rose: #f0b6c4;
+      --rose-2: #e48fa6;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ivory);
+      background: var(--navy);
+      font-family: "DM Sans", sans-serif;
+      overflow-x: hidden;
+    }
+    button { font: inherit; cursor: pointer; }
+    button:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
+    main, footer { position: relative; z-index: 1; }
+
+    /* ===== Bintang latar ===== */
+    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .stars i { position: absolute; border-radius: 50%; background: #dfe8f7; opacity: .5; animation: twinkle var(--d) ease-in-out infinite; animation-delay: var(--delay); }
+    @keyframes twinkle { 0%, 100% { opacity: .12; } 50% { opacity: .9; } }
+
+    /* ===== Dasar ===== */
+    .scene {
+      min-height: 100svh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 34px 20px;
+      overflow: hidden;
+      background: radial-gradient(ellipse 70% 55% at var(--gx, 50%) var(--gy, 35%), rgba(88,122,178,.26), transparent 70%);
+    }
+    .eyebrow { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-size: .95rem; color: var(--muted); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2 { font-family: "Playfair Display", Georgia, serif; font-weight: 500; }
+    h1 { font-size: clamp(2.6rem, 10vw, 5.5rem); line-height: 1.03; margin: 16px 0; }
+    h2 { font-size: clamp(2rem, 7vw, 3.7rem); line-height: 1.12; }
+    p { line-height: 1.8; }
+    .sub { color: var(--muted); }
+    .tiny-note { color: #8e9bb2; font-size: .8rem; }
+
+    .primary-btn, .light-btn { border-radius: 999px; padding: 14px 24px; letter-spacing: .04em; font-size: .85rem; transition: .25s ease; }
+    .primary-btn { border: 1px solid rgba(197,204,215,.55); color: var(--ivory); background: rgba(255,255,255,.06); backdrop-filter: blur(8px); }
+    .primary-btn:hover { background: var(--ivory); color: var(--navy); transform: translateY(-2px); }
+    .primary-btn:disabled { opacity: .7; cursor: default; transform: none; background: rgba(255,255,255,.06); color: var(--ivory); }
+    .light-btn { background: var(--ivory); color: var(--navy); border: 0; font-weight: 600; box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+    .light-btn:hover { background: var(--rose); transform: translateY(-2px); }
+
+    /* ===== Scene 1: Opening ===== */
+    .opening-inner {
+      width: min(680px, 100%);
+      min-height: 84svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      text-align: center;
+    }
+    .opening-copy h1 { font-size: clamp(2.2rem, 8vw, 4rem); margin: 10px 0 0; }
+
+    .stage {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(24px, 10vw, 90px);
+    }
+    .archer {
+      width: clamp(120px, 32vw, 175px);
+      flex-shrink: 0;
+      color: var(--sky);
+      transform: rotate(-3deg);
+      pointer-events: none;
+    }
+    .archer svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+    .heart-target {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .floating-heart {
+      width: clamp(58px, 16vw, 95px);
+      height: clamp(58px, 16vw, 95px);
+      display: grid;
+      place-items: center;
+      color: var(--rose);
+      font-size: clamp(3.8rem, 13vw, 6rem);
+      line-height: 1;
+      text-shadow: 0 0 22px rgba(240,182,196,.55), 0 0 56px rgba(240,182,196,.25);
+      transform: rotate(-8deg);
+      animation: heartbeat 2.4s ease-in-out infinite;
+    }
+    .heart-caption { font-size: .75rem; color: var(--muted); letter-spacing: .08em; white-space: nowrap; }
+
+    .opening-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .opening-bottom .primary-btn { min-width: 220px; }
+    .opening-bottom .tiny-note { margin: 0; text-align: center; }
+
+    .shooting-arrow { stroke-dasharray: 100; stroke-dashoffset: 100; stroke: var(--rose); }
+    #arrowHead { opacity: 0; stroke: var(--rose); transition: opacity .1s .75s; }
+    .arrow-fired .shooting-arrow { animation: arrowFly .85s cubic-bezier(.2,.7,.2,1) forwards; }
+    .arrow-fired #arrowHead { opacity: 1; }
+    .arrow-fired .floating-heart { animation: hitPulse .65s ease-in-out .8s 1; }
+
+    @keyframes heartbeat { 0%,100% { transform: scale(1) rotate(-8deg); } 50% { transform: scale(1.06) rotate(-8deg); } }
+    @keyframes arrowFly { to { stroke-dashoffset: 0; } }
+    @keyframes hitPulse { 0% { transform: scale(1) rotate(-8deg); } 40% { transform: scale(1.35) rotate(0); color: #fff; } 100% { transform: scale(1) rotate(-8deg); } }
+
+    /* ===== Scene 2: Ulang tahun ===== */
+    #birthdayReveal { --gx: 30%; --gy: 45%; text-align: center; }
+    .reveal-content { width: min(720px, 100%); }
+    .reveal-title { opacity: 0; transform: translateY(18px); background: linear-gradient(180deg, #fff8f0 30%, var(--rose)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    #birthdayReveal.visible .reveal-title { animation: fadeUp 2.2s .25s forwards; }
+    .reveal-sub { opacity: 0; color: var(--muted); font-size: 1rem; }
+    #birthdayReveal.visible .reveal-sub { animation: fadeUp 1.5s 1.3s forwards; }
+    #birthdayReveal .light-btn { margin-top: 26px; opacity: 0; }
+    #birthdayReveal.visible .light-btn { opacity: 1; transition: opacity 1s 3s, background .25s, transform .25s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== Scene 3: Pohon hati ===== */
+    #treeScene { --gx: 50%; --gy: 40%; text-align: center; }
+    .tree-layout { width: min(760px, 100%); }
+    .tree-wrap { position: relative; height: min(58vh, 460px); min-height: 330px; width: 100%; margin: 10px auto 0; }
+    .tree-heart { position: absolute; left: 50%; top: 45%; transform: translate(-50%,-50%) scale(.1) rotate(-10deg); opacity: 0; color: var(--rose); font-size: 16px; text-shadow: 0 0 10px rgba(240,182,196,.35); transition: transform .55s ease, opacity .55s ease; user-select: none; }
+    #treeScene.grow .tree-heart { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(var(--rot, 0deg)); }
+    .tree-title { margin: 0; color: var(--ivory); }
+    .tree-caption { color: var(--muted); margin: 8px 0 22px; font-size: .95rem; }
+
+    /* ===== Scene 4: Kenangan ===== */
+    #memories { --gx: 70%; --gy: 20%; }
+    .memories-inner { width: min(1050px, 100%); }
+    .section-heading { text-align: center; margin-bottom: 30px; }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: center;
+      gap: 30px;
+      width: 100%;
+      margin: 45px auto 40px;
+      padding: 15px 8px;
+    }
+    .photo-card {
+      background: #f8f0e3;
+      padding: 12px 12px 22px;
+      border-radius: 2px;
+      color: #45404a;
+      box-shadow: 0 18px 35px rgba(0,0,0,.28);
+      transition: transform .4s ease, box-shadow .4s ease;
+    }
+    .photo-card:nth-child(1) { transform: rotate(-3deg) translateY(12px); }
+    .photo-card:nth-child(2) { transform: rotate(1deg) translateY(-18px) scale(1.04); z-index: 2; }
+    .photo-card:nth-child(3) { transform: rotate(3deg) translateY(12px); }
+    .photo-card:hover { transform: translateY(-12px) rotate(0) scale(1.05); z-index: 5; box-shadow: 0 25px 45px rgba(0,0,0,.4); }
+    .photo-card img {
+      display: block;
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      border-radius: 1px;
+      background: linear-gradient(135deg, #d4d9df, #8c9caf);
+    }
+    .photo-card p {
+      margin: 15px 0 0;
+      text-align: center;
+      font-family: Georgia, serif;
+      font-size: 17px;
+      line-height: 1.4;
+    }
+    .memories-cta { text-align: center; margin-top: 34px; }
+
+    /* ===== Scene 5: Surat ===== */
+    #letterScene { --gx: 50%; --gy: 60%; }
+    .letter-wrap { width: min(620px, 100%); text-align: center; }
+    .letter-card { background: rgba(255,255,255,.06); backdrop-filter: blur(14px); padding: clamp(25px, 7vw, 52px); margin: 25px auto; box-shadow: 0 24px 70px rgba(0,0,0,.35); border: 1px solid rgba(197,204,215,.25); border-radius: 6px; text-align: left; animation: letterIn 1.2s ease both; }
+    .letter-card .eyebrow { margin-bottom: 22px; }
+    .letter-body { white-space: pre-line; color: #e6e9f0; font-family: "Playfair Display", Georgia, serif; font-size: 1.05rem; line-height: 1.95; }
+    .signature { text-align: right; margin-top: 25px; color: var(--rose); font-family: "Playfair Display", Georgia, serif; font-style: italic; }
+    .letter-hidden { display: none; }
+    .final-heart { font-size: 1.7rem; color: var(--rose); margin: 12px; animation: heartbeat 2s infinite; }
+    @keyframes letterIn { from { opacity: 0; transform: translateY(16px); } }
+
+    footer { text-align: center; color: #8e9bb2; font-size: .75rem; padding: 18px 10px 28px; border-top: 1px solid rgba(197,204,215,.12); }
+
+    /* ===== Tablet ===== */
+    @media (max-width: 900px) {
+      .photo-grid { gap: 20px; }
+      .photo-card img { height: 260px; }
+    }
+
+    /* ===== HP ===== */
+    @media (max-width: 520px) {
+      .stage { gap: 22px; }
+      .opening-bottom .primary-btn { min-width: 200px; }
+      .opening-bottom .tiny-note { font-size: .72rem; }
+
+      .tree-wrap { min-height: 315px; height: 47vh; }
+      .tree-heart { font-size: 13px; }
+
+      .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding: 10px 5px; }
+      .photo-card { padding: 8px 8px 15px; }
+      .photo-card:nth-child(1) { transform: rotate(-2deg); }
+      .photo-card:nth-child(2) { transform: rotate(2deg) translateY(-8px); }
+      .photo-card:nth-child(3) { grid-column: 1 / -1; width: 55%; justify-self: center; transform: rotate(-1deg); }
+      .photo-card img { height: 190px; }
+      .photo-card p { font-size: 13px; margin-top: 10px; }
+    }
+
+    /* ===== Tombol musik ===== */
+    .music-btn {
+      position: fixed; right: 16px; bottom: 16px; z-index: 10;
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid rgba(197,204,215,.55);
+      background: rgba(16,26,44,.7); backdrop-filter: blur(8px);
+      color: var(--ivory); font-size: 1.1rem; transition: .25s ease;
+    }
+    .music-btn:hover { background: var(--ivory); color: var(--navy); }
+    .music-btn.muted { opacity: .5; text-decoration: line-through; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      .stars i, .floating-heart, .final-heart { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars" aria-hidden="true"></div>
+
+  <main>
+    <!-- Scene 1: Opening -->
+    <section class="scene" id="opening">
+      <div class="opening-inner">
+
+        <div class="opening-copy">
+          <div class="eyebrow">A little something for you</div>
+          <h1>A little love,<br />just for you.</h1>
+        </div>
+
+        <div class="stage">
+          <div class="archer" aria-hidden="true">
+            <svg viewBox="0 0 190 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="archerSvg">
+              <defs>
+                <filter id="cupidGlow" filterUnits="userSpaceOnUse" x="-300" y="-300" width="900" height="760">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Sayap -->
+                <path d="M49 65 C22 45 14 20 31 15 C45 12 51 34 52 43 C57 24 69 18 75 27 C82 39 65 57 57 67" opacity=".85"/>
+                <path d="M47 58 C34 43 31 31 31 22 M53 57 C57 42 64 34 70 31" stroke-width="1.1" opacity=".6"/>
+
+                <!-- Kepala -->
+                <circle cx="82" cy="43" r="8" fill="currentColor" stroke="none"/>
+                <path d="M76 39 Q80 29 89 37" stroke-width="1.5"/>
+
+                <!-- Badan dan jubah -->
+                <path d="M79 54 Q70 70 78 85 Q86 91 97 82"/>
+                <path d="M78 65 Q63 77 66 96 Q78 91 87 86" opacity=".85"/>
+
+                <!-- Kaki -->
+                <path d="M78 85 L65 111 L53 122 M85 87 L94 107 L108 115"/>
+
+                <!-- Tangan memegang busur -->
+                <path d="M77 61 L99 69 L111 54"/>
+                <path d="M83 63 L95 49"/>
+
+                <!-- Busur -->
+                <path d="M111 39 Q143 70 111 101" stroke-width="1.8"/>
+                <path d="M111 39 L111 101" stroke-width="1" opacity=".55"/>
+
+                <!-- Panah dan mata panah (diatur lewat JS saat tombol ditekan) -->
+                <path id="flyArrow" class="shooting-arrow" pathLength="100" d="M82 56 L166 27" stroke-width="2.4" filter="url(#cupidGlow)"/>
+                <path id="arrowHead" d="M-8 -6 L0 0 L-8 6" stroke-width="2"/>
+
+                <!-- Bintang kecil -->
+                <path d="M37 103 L37 109 M34 106 L40 106" stroke-width="1.2" opacity=".7"/>
+                <path d="M125 116 L125 122 M122 119 L128 119" stroke-width="1.2" opacity=".7"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="heart-target">
+            <div class="floating-heart" id="targetHeart" aria-hidden="true">♥</div>
+            <div class="heart-caption">aim for the heart</div>
+          </div>
+        </div>
+
+        <div class="opening-bottom">
+          <button class="primary-btn" id="shootBtn">Release the arrow ↗</button>
+          <div class="tiny-note">take a breath, then make a wish</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Scene 2: Selamat ulang tahun -->
+    <section class="scene" id="birthdayReveal">
+      <div class="reveal-content">
+        <div class="eyebrow">today is all about you</div>
+        <h1 class="reveal-title">Happy<br />Birthday.</h1>
+        <p class="reveal-sub">your next chapter starts here</p>
+        <button class="light-btn" id="toTreeBtn">Continue ↓</button>
+      </div>
+    </section>
+
+    <!-- Scene 3: Pohon hati -->
+    <section class="scene" id="treeScene">
+      <div class="tree-layout">
+        <div class="eyebrow">something made with love</div>
+        <div class="tree-wrap" id="treeWrap" aria-label="A tree formed from little hearts"></div>
+        <h2 class="tree-title">Happy Birthday,<br />My Favorite Person.</h2>
+        <p class="tree-caption">Every little heart has a story.</p>
+        <button class="light-btn" id="toMemoriesBtn">See our memories ↓</button>
+      </div>
+    </section>
+
+    <!-- Scene 4: Kenangan -->
+    <section class="scene" id="memories">
+      <div class="memories-inner">
+        <div class="section-heading">
+          <div class="eyebrow">little moments, big meaning</div>
+          <h2>Our Little<br />Universe.</h2>
+          <p class="sub">A few moments I wish I could keep forever.</p>
+        </div>
+
+        <!-- Ganti nama file foto dengan foto kalian (taruh di folder yang sama dengan file ini) -->
+        <div class="photo-grid">
+          <div class="photo-card">
+            <img src="enjel2.jpeg" alt="Foto kenangan pertama" onerror="this.style.background='linear-gradient(145deg,#d8d1c7,#78879b)'" />
+            <p>the day I still remember</p>
+          </div>
+          <div class="photo-card">
+            <img src="enjel3.jpeg" alt="Foto kenangan kedua" onerror="this.style.background='linear-gradient(145deg,#aeb7c1,#ded6ca)'" />
+            <p>my favorite kind of ordinary</p>
+          </div>
+          <div class="photo-card">
+            <img src="enjel2.jpeg" alt="Foto kenangan ketiga" onerror="this.style.background='linear-gradient(145deg,#59677a,#c9b9aa)'" />
+            <p>one for the memory book</p>
+          </div>
+        </div>
+
+        <div class="memories-cta">
+          <button class="primary-btn" id="toLetterBtn">there's one more thing →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 5: Surat -->
+    <section class="scene" id="letterScene">
+      <div class="letter-wrap">
+        <div class="eyebrow">written just for you</div>
+        <h2>A Letter<br />For You.</h2>
+        <p class="sub">Some things are better said from the heart.</p>
+        <button class="light-btn" id="openLetterBtn">Open your letter ♥</button>
+
+        <article class="letter-card letter-hidden" id="letterCard">
+          <div class="eyebrow">to my favorite person</div>
+          <div class="letter-body" id="letterBody">Selamat ulang tahun, sayangku. 🤍
+
+Hari ini adalah hari spesial kamu, dan aku berharap semoga dunia selalu punya banyak alasan untuk membuat kamu bahagia. Semoga panjang umur, sehat selalu, dilancarkan setiap langkahnya, dimudahkan rezekinya, dan satu per satu impian yang selama ini kamu simpan bisa menjadi kenyataan.
+
+Terima kasih sudah lahir ke dunia ini, sayang. Terima kasih karena dari sekian banyak orang di dunia, aku diberi kesempatan untuk mengenal kamu, mencintai kamu, dan menjadi bagian dari perjalanan hidup kamu.
+
+Aku mungkin nggak selalu bisa menjadi pasangan yang sempurna. Ada kalanya aku salah, ada kalanya aku belum bisa memahami kamu sepenuhnya. Tapi satu hal yang ingin kamu tahu, aku selalu bersyukur karena sampai hari ini kita masih memilih untuk saling bertahan dan memperjuangkan hubungan ini.
+
+Dan ternyata, hari ini bukan cuma tentang bertambahnya usia kamu, tetapi juga tentang satu tahun perjalanan kita bersama. Satu tahun yang berisi banyak cerita, tawa, perbedaan, pembelajaran, dan hal-hal sederhana yang akhirnya menjadi kenangan berharga buat aku.
+
+Terima kasih sudah bertahan sejauh ini. Terima kasih sudah mengajarkan aku tentang kesabaran, tentang memahami seseorang, dan tentang bagaimana mencintai bukan hanya ketika semuanya terasa mudah, tetapi juga ketika keadaan sedang tidak baik-baik saja.
+
+Aku bangga sama kamu, Majiid. Bangga dengan semua proses yang sedang kamu jalani, dengan hal-hal yang sudah kamu lewati, dan dengan versi diri kamu yang terus bertumbuh sampai hari ini.
+
+Ke depannya, aku nggak tahu perjalanan kita akan seperti apa. Tapi aku berharap kita masih menjadi dua orang yang sama-sama mau belajar, saling menguatkan, dan nggak mudah menyerah satu sama lain.
+
+Tetap jadi Majiid yang aku kenal, ya, sayang. Jangan berhenti mengejar apa yang kamu impikan. Kalau suatu hari dunia terasa berat, semoga kamu selalu ingat kalau ada aku yang akan ikut mendoakan, mendukung, dan menemani kamu sebisaku.
+
+Sekali lagi, happy birthday and happy 1st anniversary, cintaku.
+
+Semoga ini menjadi awal dari lebih banyak cerita indah yang bisa kita rayakan bersama.
+
+I love you, more than words can explain. ❤️🎂✨</div>
+          <div class="signature">With love, <span id="senderName"></span></div>
+        </article>
+
+        <div class="final-heart" id="finalHeart" style="display:none">♥</div>
+        <p class="sub" id="endingLine" style="display:none">Another year of you. Another reason to be grateful.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>made with love · just for you</footer>
+
+  <audio id="bgm" src="lagu.mp3" preload="auto"></audio>
+  <button class="music-btn" id="musicBtn" aria-label="Putar atau jeda musik" style="display:none">♪</button>
+
+  <script>
+    // Detik mulai reff lagu (2:12 = 132 detik)
+    const REFF_START = 132;
+
+    // Ubah nama pengirim di sini
+    const CONFIG = { senderName: 'Pacarmu' };
+    document.getElementById('senderName').textContent = CONFIG.senderName;
+
+    const opening = document.getElementById('opening');
+    const reveal = document.getElementById('birthdayReveal');
+    const treeScene = document.getElementById('treeScene');
+    const memories = document.getElementById('memories');
+    const letterScene = document.getElementById('letterScene');
+
+    function goTo(section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Bintang latar
+    const starLayer = document.getElementById('stars');
+    for (let i = 0; i < 70; i++) {
+      const s = document.createElement('i');
+      const size = 1 + Math.random() * 2;
+      s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px`;
+      s.style.setProperty('--d', `${2 + Math.random() * 4}s`);
+      s.style.setProperty('--delay', `-${Math.random() * 5}s`);
+      starLayer.appendChild(s);
+    }
+
+    // Panah terbang tepat ke arah hati
+    document.getElementById('shootBtn').addEventListener('click', () => {
+      const svg = document.getElementById('archerSvg').getBoundingClientRect();
+      const heart = document.getElementById('targetHeart').getBoundingClientRect();
+      const k = 190 / svg.width;
+      const sx = 82, sy = 56;
+      const tx = (heart.left + heart.width / 2 - svg.left) * k;
+      const ty = (heart.top + heart.height / 2 - svg.top) * k;
+
+      document.getElementById('flyArrow').setAttribute('d', `M${sx} ${sy} L${tx.toFixed(1)} ${ty.toFixed(1)}`);
+
+      const angle = Math.atan2(ty - sy, tx - sx) * 180 / Math.PI;
+      document.getElementById('arrowHead')
+        .setAttribute('transform', `translate(${tx.toFixed(1)} ${ty.toFixed(1)}) rotate(${angle.toFixed(1)})`);
+
+      opening.classList.add('arrow-fired');
+
+      // Musik: mulai dari reff (2:12 = 132 detik) dengan fade-in
+      const bgm = document.getElementById('bgm');
+      document.getElementById('musicBtn').style.display = 'block';
+      const startMusic = () => {
+        bgm.currentTime = REFF_START;
+        bgm.volume = 0;
+        bgm.play().catch(() => {});
+        const fade = setInterval(() => {
+          bgm.volume = Math.min(0.6, bgm.volume + 0.05);
+          if (bgm.volume >= 0.6) clearInterval(fade);
+        }, 150);
+      };
+      if (bgm.readyState >= 1) startMusic();
+      else bgm.addEventListener('loadedmetadata', startMusic, { once: true });
+      const btn = document.getElementById('shootBtn');
+      btn.disabled = true;
+      btn.textContent = 'A wish is on its way…';
+      setTimeout(() => goTo(reveal), 1500);
+    });
+
+    // Scene 2 muncul otomatis saat terlihat (juga kalau user scroll manual)
+    new IntersectionObserver((entries, obs) => {
+      if (entries.some(e => e.isIntersecting)) { reveal.classList.add('visible'); obs.disconnect(); }
+    }, { threshold: 0.5 }).observe(reveal);
+
+    document.getElementById('toTreeBtn').addEventListener('click', () => {
+      makeHeartTree();
+      goTo(treeScene);
+    });
+    document.getElementById('toMemoriesBtn').addEventListener('click', () => goTo(memories));
+    document.getElementById('toLetterBtn').addEventListener('click', () => goTo(letterScene));
+
+    document.getElementById('openLetterBtn').addEventListener('click', () => {
+      document.getElementById('letterCard').classList.remove('letter-hidden');
+      document.getElementById('finalHeart').style.display = 'block';
+      document.getElementById('endingLine').style.display = 'block';
+      document.getElementById('openLetterBtn').style.display = 'none';
+    });
+
+    // Pohon dari hati-hati kecil: batang -> cabang -> mahkota daun -> hati jatuh di tanah
+    function makeHeartTree() {
+      const wrap = document.getElementById('treeWrap');
+      if (wrap.dataset.created) return;
+      wrap.dataset.created = 'true';
+      const w = wrap.clientWidth, h = wrap.clientHeight;
+      const rnd = (a, b) => a + Math.random() * (b - a);
+      const wood = ['#e8c4b8', '#d4a99c', '#c4958a', '#f0d5cb'];
+      const leaf = ['#f0b6c4', '#e48fa6', '#ffd9e0', '#a9bddb', '#dfe8f7'];
+      const add = (x, y, size, colors, delay, char = '\u2665') => {
+        const el = document.createElement('span');
+        el.className = 'tree-heart';
+        el.textContent = char;
+        el.style.left = `${Math.max(8, Math.min(w - 8, x))}px`;
+        el.style.top = `${y}px`;
+        el.style.fontSize = `${size}px`;
+        el.style.color = colors[Math.floor(Math.random() * colors.length)];
+        el.style.setProperty('--rot', `${rnd(-25, 25)}deg`);
+        el.style.transitionDelay = `${delay}s`;
+        wrap.appendChild(el);
+      };
+      const cx = w / 2;
+      const u = Math.min(w * 0.2, h * 0.22);
+      const crownY = h * 0.40;
+      const baseY = h * 0.93;
+      const topY = crownY + u * 0.6;
+
+      // 1. Batang
+      for (let y = baseY; y > topY; y -= 9) {
+        const t = (baseY - y) / (baseY - topY);
+        const spread = 11 * (1 - t) + 4;
+        for (let k = 0; k < 3; k++) add(cx + rnd(-spread, spread), y, 15 - t * 5, wood, t + k * 0.03);
+      }
+
+      // 2. Cabang
+      [[-1, .55, 1.0, .2], [1, .5, 1.0, .2], [-1, .8, .6, -.5], [1, .8, .6, -.5]].forEach(([dir, from, reach, up]) => {
+        const sx = cx, sy = baseY - (baseY - topY) * from;
+        const ex = cx + dir * u * reach, ey = crownY + u * up;
+        const cxp = sx, cyp = ey + (sy - ey) * 0.35;
+        for (let i = 0; i <= 12; i++) {
+          const t = i / 12, m = 1 - t;
+          add(m*m*sx + 2*m*t*cxp + t*t*ex, m*m*sy + 2*m*t*cyp + t*t*ey, 12 - t * 4, wood, 0.9 + t * 0.6);
+        }
+      });
+
+      // 3. Mahkota
+      const blobs = [[0, -.1, 1.1], [-1, .25, .85], [1, .25, .85], [-.55, -.7, .8], [.55, -.7, .8]];
+      for (let i = 0; i < 210; i++) {
+        const [bx, by, br] = blobs[Math.floor(Math.random() * blobs.length)];
+        const a = rnd(0, Math.PI * 2), d = Math.sqrt(Math.random()) * br * u;
+        add(cx + bx * u + Math.cos(a) * d, crownY + by * u + Math.sin(a) * d,
+            rnd(10, 20), leaf, 1.3 + Math.random() * 1.4, Math.random() > .15 ? '\u2665' : '\u2726');
+      }
+
+      // 4. Hati yang jatuh di sekitar akar
+      for (let i = 0; i < 10; i++) {
+        add(cx + rnd(-u * 1.6, u * 1.6), Math.min(h - 8, baseY + rnd(-4, 12)), rnd(9, 13), leaf, 2.8 + Math.random() * 0.8);
+      }
+
+      void wrap.offsetWidth;
+      treeScene.classList.add('grow');
+    }
+
+    new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) makeHeartTree();
+    }, { threshold: 0.25 }).observe(treeScene);
+
+    // Kalau lagu habis, ulang lagi dari reff
+    document.getElementById('bgm').addEventListener('ended', function () {
+      this.currentTime = REFF_START;
+      this.play();
+    });
+
+    // Tombol putar/jeda musik
+    document.getElementById('musicBtn').addEventListener('click', (e) => {
+      const bgm = document.getElementById('bgm');
+      if (bgm.paused) { bgm.play(); e.currentTarget.classList.remove('muted'); }
+      else { bgm.pause(); e.currentTarget.classList.add('muted'); }
+    });
+  </script>
+</body>
+</html>
